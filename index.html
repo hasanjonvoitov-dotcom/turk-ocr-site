@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Turkcha Insho OCR Demo</title>
+  <!-- Tesseract.js kutubxonasi -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.5/dist/tesseract.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    h1 { color: #2c3e50; }
+    #result { margin-top: 20px; background: #f5f5f5; padding: 10px; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h1>Turkcha Insho OCR Demo</h1>
+
+  <p>Rasmingizni yuklang:</p>
+  <input type="file" id="uploadImage" accept="image/*">
+  <button id="checkBtn">Tekshir</button>
+
+  <div id="loading" style="display:none;">OCR ishlayapti, biroz kuting...</div>
+  <pre id="result"></pre>
+
+  <script>
+    const uploadImage = document.getElementById('uploadImage');
+    const checkBtn = document.getElementById('checkBtn');
+    const result = document.getElementById('result');
+    const loading = document.getElementById('loading');
+
+    checkBtn.addEventListener('click', () => {
+      if (!uploadImage.files[0]) {
+        alert("Iltimos, rasm tanlang!");
+        return;
+      }
+
+      loading.style.display = 'block';
+      result.textContent = '';
+
+      Tesseract.recognize(
+        uploadImage.files[0],
+        'tur', // Turkcha til
+        { logger: m => console.log(m) }
+      ).then(({ data: { text } }) => {
+        loading.style.display = 'none';
+        result.textContent = "OCR natijasi:\n\n" + text;
+
+        // Keyinchalik shu matnni AI orqali xatolarni tekshirish uchun ishlatamiz
+      }).catch(err => {
+        loading.style.display = 'none';
+        alert("Xatolik yuz berdi: " + err);
+      });
+    });
+  </script>
+</body>
+</html>
